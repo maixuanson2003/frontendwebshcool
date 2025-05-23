@@ -63,7 +63,7 @@ const ListEmployee = () => {
                                     <Link to={`/admin-dashboard/employee/${emp._id}`} className="bg-blue-500 px-3 py-1 rounded text-white">View</Link>
                                     <Link to={`/admin-dashboard/edit-employee/${emp._id}`} className="bg-green-500 px-3 py-1 rounded text-white">Edit</Link>
                                     <Link to={`/admin-dashboard/salary-view/${emp._id}`} className="bg-yellow-400 px-3 py-1 rounded text-white">Salary</Link>
-                                    <Link to={`/admin-dashboard/leave/${emp._id}`} className="bg-red-500 px-3 py-1 rounded text-white">Leave</Link>
+                                    <Link to={`/admin-dashboard/leave/history/${emp._id}`} className="bg-red-500 px-3 py-1 rounded text-white">Leave</Link>
                                 </td>
                             </tr>
                         ))}

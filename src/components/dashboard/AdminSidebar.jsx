@@ -7,7 +7,7 @@ const AdminSidebar = () => {
     { to: "/admin-dashboard", icon: <FaTachometerAlt />, label: "Dashboard" },
     { to: "/admin-dashboard/employee", icon: <FaUser />, label: "Employee" },
     { to: "/admin-dashboard/department", icon: <FaUser />, label: "Department" },
-    { to: "/leave", icon: <FaUser />, label: "Leave" },
+    { to: "/admin-dashboard/leave", icon: <FaUser />, label: "Leave" },
     { to: "/admin-dashboard/addsalary", icon: <FaUser />, label: "Salary" },
     { to: "/setting", icon: <FaUser />, label: "Setting" },
   ];

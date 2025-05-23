@@ -20,6 +20,10 @@ import EmployeeProfile from './components/employeedashboard/EmployeeProfile';
 import LeaveList from './components/employeedashboard/Leave/LeaveList';
 import AddLeave from './components/employeedashboard/Leave/AddLeave';
 import SalaryHistory from './components/salary/Employee/SalaryHistory';
+import LeaveManagementInterface from './components/leave/LeaveAdmin';
+import ManageLeaves from './components/leave/LeaveAdmin';
+import LeaveDetails from './components/leave/LeaveDetails';
+import LeaveHistory from './components/leave/LeaveHistory';
 function App() {
   return (
     <BrowserRouter>
@@ -44,6 +48,9 @@ function App() {
           <Route path='/admin-dashboard/edit-employee/:id' element={<EditEmployee />}></Route>
           <Route path='/admin-dashboard/addsalary' element={<AddSalary />}></Route>
           <Route path='/admin-dashboard/salary-view/:id' element={<SalaryView />}></Route>
+          <Route path='/admin-dashboard/leave' element={<ManageLeaves />}></Route>
+          <Route path='/admin-dashboard/leave/:id' element={<LeaveDetails />}></Route>
+          <Route path='/admin-dashboard/leave/history/:id' element={<LeaveHistory />}></Route>
 
         </Route>
         <Route path='/employee-dashboard' element={
