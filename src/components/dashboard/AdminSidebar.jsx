@@ -6,7 +6,12 @@ const AdminSidebar = () => {
   const navItems = [
     { to: "/admin-dashboard", icon: <FaTachometerAlt />, label: "Dashboard" },
     { to: "/admin-dashboard/employee", icon: <FaUser />, label: "Employee" },
-    { to: "/admin-dashboard/department", icon: <FaUser />, label: "Department" },
+    { to: "/admin-dashboard/user", icon: <FaUser />, label: "user" },
+    {
+      to: "/admin-dashboard/department",
+      icon: <FaUser />,
+      label: "Department",
+    },
     { to: "/admin-dashboard/leave", icon: <FaUser />, label: "Leave" },
     { to: "/admin-dashboard/addsalary", icon: <FaUser />, label: "Salary" },
     { to: "/setting", icon: <FaUser />, label: "Setting" },
@@ -15,7 +20,9 @@ const AdminSidebar = () => {
   return (
     <div className="w-64 h-auto bg-gray-800 text-white shadow-lg p-4">
       <div className="mb-8">
-        <h3 className="text-xl font-bold text-center border-b pb-2">Employee Ms</h3>
+        <h3 className="text-xl font-bold text-center border-b pb-2">
+          Employee Ms
+        </h3>
       </div>
       <nav className="flex flex-col space-y-2">
         {navItems.map((item, index) => (

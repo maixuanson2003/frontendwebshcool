@@ -1,34 +1,49 @@
 import React, { useEffect, useState } from "react";
 import { GetLeaveList } from "../../ultils/Api/Leave";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
-const initialLeaves = [
-  { id: 1, empId: "yousaf222", name: "yousaf", type: "Sick Leave", department: "Logistic", days: 4, status: "Approved" },
-  { id: 2, empId: "yousaf222", name: "yousaf", type: "Casual Leave", department: "Logistic", days: 1, status: "Approved" },
-  { id: 3, empId: "asif113", name: "asif", type: "Sick Leave", department: "Database", days: 1, status: "Rejected" },
-  { id: 4, empId: "asif113", name: "asif", type: "Annual Leave", department: "Database", days: 2, status: "Rejected" },
-  { id: 5, empId: "asif113", name: "asif", type: "Casual Leave", department: "Database", days: 2, status: "Pending" },
-];
+import Pagination from "../pagination/Pagination";
+const ITEMS_PER_PAGE = 5;
 
 const ManageLeaves = () => {
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
-  const [leave,setLeave]=useState([]);
-  const navigate=useNavigate();
-  useEffect(()=>{
-    const fetchData =async ()=>{
-        const data=await GetLeaveList();
-        setLeave(data);
-    }
-    fetchData();
-  },[])
+  const [leave, setLeave] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
 
-  const filteredLeaves = leave.filter((leave) => {
+  const page = parseInt(searchParams.get("page")) || 1;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await GetLeaveList();
+      const cleaned = data?.filter((item) => item.employeeId !== null);
+      setLeave(cleaned);
+    };
+    fetchData();
+  }, []);
+
+  const filteredLeaves = leave?.filter((leave) => {
     return (
-      leave.employeeId.employeeId.toLowerCase().includes(search.toLowerCase()) &&
+      leave?.employeeId?.employeeId
+        ?.toLowerCase()
+        .includes(search.toLowerCase()) &&
       (filterStatus === "" || leave.status === filterStatus)
     );
   });
+
+  const totalPages = Math.ceil(filteredLeaves.length / ITEMS_PER_PAGE);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setSearchParams({ page: newPage });
+    }
+  };
+
+  const paginatedLeaves = filteredLeaves.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE
+  );
 
   const statusColor = (status) => {
     switch (status) {
@@ -44,14 +59,17 @@ const ManageLeaves = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-white shadow rounded-xl">
+    <div className="w-full mx-auto p-6 bg-white shadow rounded-xl">
       <h2 className="text-2xl font-semibold mb-4">Manage Leaves</h2>
 
+      {/* Filter buttons */}
       <div className="flex gap-2 mb-4">
         {["Pending", "Approved", "Rejected"].map((status) => (
           <button
             key={status}
-            onClick={() => setFilterStatus(filterStatus === status ? "" : status)}
+            onClick={() =>
+              setFilterStatus(filterStatus === status ? "" : status)
+            }
             className={`px-4 py-1 rounded ${
               filterStatus === status
                 ? "bg-blue-600 text-white"
@@ -63,6 +81,7 @@ const ManageLeaves = () => {
         ))}
       </div>
 
+      {/* Search */}
       <input
         type="text"
         placeholder="Search By Emp ID"
@@ -71,9 +90,10 @@ const ManageLeaves = () => {
         className="w-full mb-4 p-2 border border-gray-300 rounded"
       />
 
+      {/* Table */}
       <div className="overflow-x-auto">
         <table className="min-w-full table-auto border border-gray-300 text-sm">
-          <thead className="bg-gray-100">
+          <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
             <tr>
               <th className="border p-2">S No</th>
               <th className="border p-2">Emp ID</th>
@@ -86,34 +106,54 @@ const ManageLeaves = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredLeaves?.map((leave, index) => (
-              <tr key={leave.id} className="text-center">
-                <td className="border p-2">{index + 1}</td>
-                <td className="border p-2">{leave.employeeId.employeeId}</td>
-                <td className="border p-2">{leave.employeeId.userId.name}</td>
-                <td className="border p-2">{leave.leaveType}</td>
-                <td className="border p-2">{leave.employeeId.department.dep_name}</td>
-                <td className="border p-2">{leave.appliedAt}</td>
-                <td className={`border p-2 ${statusColor(leave.status)}`}>
-                  {leave.status}
+            {paginatedLeaves.map((leave, index) => (
+              <tr key={leave._id || index} className="text-center">
+                <td className="border p-2">
+                  {(page - 1) * ITEMS_PER_PAGE + index + 1}
                 </td>
                 <td className="border p-2">
-                  <button onClick={
-                    ()=>{
-                        navigate(`/admin-dashboard/leave/${leave._id}`)
+                  {leave?.employeeId?.employeeId || "N/A"}
+                </td>
+                <td className="border p-2">
+                  {leave?.employeeId?.userId?.name || "N/A"}
+                </td>
+                <td className="border p-2">{leave?.leaveType || "N/A"}</td>
+                <td className="border p-2">
+                  {leave?.employeeId?.department?.dep_name || "N/A"}
+                </td>
+                <td className="border p-2">{leave?.appliedAt || "N/A"}</td>
+                <td className={`border p-2 ${statusColor(leave?.status)}`}>
+                  {leave?.status || "N/A"}
+                </td>
+                <td className="border p-2">
+                  <button
+                    onClick={() =>
+                      navigate(`/admin-dashboard/leave/${leave._id}`)
                     }
-                  } className="bg-blue-500 text-white px-3 py-1 rounded text-xs">View</button>
+                    className="bg-blue-500 text-white px-3 py-1 rounded text-xs"
+                  >
+                    View
+                  </button>
                 </td>
               </tr>
             ))}
-            {filteredLeaves.length === 0 && (
+            {paginatedLeaves.length === 0 && (
               <tr>
-                <td colSpan="8" className="text-center p-4 text-gray-500">No results found</td>
+                <td colSpan="8" className="text-center p-4 text-gray-500">
+                  No results found
+                </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 };
