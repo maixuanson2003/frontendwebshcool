@@ -12,10 +12,16 @@ export const CreateDataEmployee = async (formdata) => {
     );
     return response.data.success;
   } catch (err) {
-    console.log(err);
+    if (err.response) {
+      const status = err.response.status;
 
-    if (err.response && !err.response.data.success) {
-      alert(err.response.data.error);
+      if (status === 401) {
+        alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      } else {
+        alert(err.response.data.error || "Có lỗi xảy ra");
+      }
     }
   }
 };
@@ -80,10 +86,16 @@ export const UpdateEmployee = async (formdata, id) => {
     );
     return response.data.success;
   } catch (err) {
-    console.log(err);
+    if (err.response) {
+      const status = err.response.status;
 
-    if (err.response && !err.response.data.success) {
-      alert(err.response.data.error);
+      if (status === 401) {
+        alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      } else {
+        alert(err.response.data.error || "Có lỗi xảy ra");
+      }
     }
   }
 };

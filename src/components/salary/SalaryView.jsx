@@ -1,84 +1,97 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { GetSalaryByEmployeeId } from "../../ultils/Api/Salary";
+import Pagination from "../pagination/Pagination";
+
+const ITEMS_PER_PAGE = 5;
 
 const SalaryView = () => {
-  const [salaries, setSalaries] = useState([]);
-  const [filteredSalaries, setFilteredSalaries] = useState(null);
   const { id } = useParams();
+  const [salaries, setSalaries] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const fetchSalary = async () => {
-    const data = await GetSalaryByEmployeeId(id);
-    setSalaries(data);
-    setFilteredSalaries(data);
-  };
+  const page = parseInt(searchParams.get("page")) || 1;
 
   useEffect(() => {
+    const fetchSalary = async () => {
+      const data = await GetSalaryByEmployeeId(id);
+      setSalaries(data || []);
+    };
     fetchSalary();
-  }, []);
+  }, [id]);
 
-  const filteredSalarie = (e) => {
-    const q = e.target.value;
-    const filteredRecord = salaries.filter((salary) =>
-      salary.employeeId.toLowerCase().includes(q.toLowerCase())
-    );
-    setFilteredSalaries(filteredRecord);
+  const totalPages = Math.ceil(salaries.length / ITEMS_PER_PAGE);
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setSearchParams({ page: newPage });
+    }
   };
 
+  const paginatedSalaries = salaries.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE
+  );
+
   return (
-    <div>
-      {filteredSalaries == null ? (
-        <div>Loading....</div>
-      ) : (
-        <div className="overflow-x-auto p-5">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold">Salary History</h2>
-          </div>
-          <div className="flex justify-end my-3">
-            <input
-              type="text"
-              placeholder="Search By Emp ID"
-              className="border px-2 rounded-md py-0.5 border-gray-300"
-              onChange={filteredSalarie}
-            />
-          </div>
-          {filteredSalaries.length > 0 ? (
-            <table className="min-w-full border border-gray-300">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="border px-4 py-2">SNO</th>
-                  <th className="border px-4 py-2">EMP ID</th>
-                  <th className="border px-4 py-2">SALARY</th>
-                  <th className="border px-4 py-2">ALLOWANCE</th>
-                  <th className="border px-4 py-2">DEDUCTION</th>
-                  <th className="border px-4 py-2">TOTAL</th>
-                  <th className="border px-4 py-2">PAY DATE</th>
+    <div className="p-6">
+      <div className="text-center mb-4">
+        <h3 className="text-2xl font-bold">Salary History</h3>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border">
+          <thead>
+            <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+              <th className="py-3 px-4 text-center">S No</th>
+              <th className="py-3 px-4 text-center">Emp ID</th>
+              <th className="py-3 px-4 text-center">Salary</th>
+              <th className="py-3 px-4 text-center">Allowance</th>
+              <th className="py-3 px-4 text-center">Deduction</th>
+              <th className="py-3 px-4 text-center">Total</th>
+              <th className="py-3 px-4 text-center">Pay Date</th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-700 text-sm">
+            {paginatedSalaries.length > 0 ? (
+              paginatedSalaries.map((item, index) => (
+                <tr
+                  key={index}
+                  className="border-b hover:bg-gray-100 text-center"
+                >
+                  <td className="py-3 px-4">
+                    {(page - 1) * ITEMS_PER_PAGE + index + 1}
+                  </td>
+                  <td className="py-3 px-4">
+                    {item?.employeeId?.employeeId || "N/A"}
+                  </td>
+                  <td className="py-3 px-4">{item?.basicSalary || "N/A"}</td>
+                  <td className="py-3 px-4">{item?.allowances || "N/A"}</td>
+                  <td className="py-3 px-4">{item?.deductions || "N/A"}</td>
+                  <td className="py-3 px-4">{item?.netSalary || "N/A"}</td>
+                  <td className="py-3 px-4">
+                    {item?.payDate
+                      ? new Date(item.payDate).toLocaleDateString()
+                      : "N/A"}
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {filteredSalaries.map((item, index) => (
-                  <tr key={index} className="text-center">
-                    <td className="border px-4 py-2">{index + 1}</td>
-                    <td className="border px-4 py-2">
-                      {item.employeeId.employeeId}
-                    </td>
-                    <td className="border px-4 py-2">{item.basicSalary}</td>
-                    <td className="border px-4 py-2">{item.allowances}</td>
-                    <td className="border px-4 py-2">{item.deductions}</td>
-                    <td className="border px-4 py-2">{item.netSalary}</td>
-                    <td className="border px-4 py-2">
-                      {" "}
-                      {new Date(item.payDate).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <div className="text-center text-gray-500">No records found.</div>
-          )}
-        </div>
-      )}
+              ))
+            ) : (
+              <tr>
+                <td colSpan="7" className="text-center py-4 text-gray-500">
+                  No salary records found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };

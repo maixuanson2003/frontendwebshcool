@@ -30,12 +30,13 @@ const LeaveDetails = () => {
       <h2 className="text-2xl font-bold text-center mb-8">Leave Details</h2>
 
       <div className="flex flex-row gap-6">
-        {/* Profile Image with effect */}
         <div className="relative">
           <div className="w-40 h-40 border-4 border-white rounded-full overflow-hidden z-10 relative">
             <img
               className="object-cover w-full h-full"
-              src={`http://localhost:8080/${leave?.employeeId?.userId?.profileImage || "default.jpg"}`}
+              src={`http://localhost:8080/${
+                leave?.employeeId?.userId?.profileImage || "default.jpg"
+              }`}
               alt="Employee"
             />
           </div>
@@ -48,12 +49,20 @@ const LeaveDetails = () => {
           <InfoRow label="Employee ID" value={leave?.employeeId?.employeeId} />
           <InfoRow label="LeaveType" value={leave?.leaveType} />
           <InfoRow label="Reason" value={leave?.reason} />
-          <InfoRow label="Department" value={leave?.employeeId?.department?.dep_name} />
-          <InfoRow label="Start Date" value={new Date(leave?.startDate).toLocaleDateString()} />
-          <InfoRow label="End Date" value={new Date(leave?.endDate).toLocaleDateString()} />
+          <InfoRow
+            label="Department"
+            value={leave?.employeeId?.department?.dep_name}
+          />
+          <InfoRow
+            label="Start Date"
+            value={new Date(leave?.startDate).toLocaleDateString()}
+          />
+          <InfoRow
+            label="End Date"
+            value={new Date(leave?.endDate).toLocaleDateString()}
+          />
           <InfoRow label="Status" value={leave?.status || "Pending"} />
 
-          {/* Action buttons */}
           {leave?.status === "Pending" && (
             <div className="flex justify-start gap-4 mt-4">
               <button
@@ -86,4 +95,3 @@ const InfoRow = ({ label, value }) => (
 );
 
 export default LeaveDetails;
-

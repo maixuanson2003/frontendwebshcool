@@ -1,14 +1,14 @@
 import React, { Children } from "react";
 import { useAuth } from "../context/authContext";
 import { Navigate } from "react-router-dom";
+import { useEffect } from "react";
 const PrivateRoutes = ({ children }) => {
-    const { user, loading } = useAuth();
+  const { user, loading } = useAuth();
 
-    if (loading) {
-        return <div>Loading...</div>; // 👈 Hoặc spinner đẹp hơn
-    }
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-    return user ? children : <Navigate to="/login" />;
-
-}
+  return user ? children : <Navigate to="/login" />;
+};
 export default PrivateRoutes;

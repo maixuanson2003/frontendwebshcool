@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { GetLeaveList } from "../../ultils/Api/Leave";
 import { useNavigate, useSearchParams } from "react-router-dom";
-
 import Pagination from "../pagination/Pagination";
+
 const ITEMS_PER_PAGE = 5;
 
 const ManageLeaves = () => {
@@ -59,101 +59,112 @@ const ManageLeaves = () => {
   };
 
   return (
-    <div className="w-full mx-auto p-6 bg-white shadow rounded-xl">
-      <h2 className="text-2xl font-semibold mb-4">Manage Leaves</h2>
-
-      {/* Filter buttons */}
-      <div className="flex gap-2 mb-4">
-        {["Pending", "Approved", "Rejected"].map((status) => (
-          <button
-            key={status}
-            onClick={() =>
-              setFilterStatus(filterStatus === status ? "" : status)
-            }
-            className={`px-4 py-1 rounded ${
-              filterStatus === status
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 text-gray-800"
-            }`}
-          >
-            {status}
-          </button>
-        ))}
+    <div className="p-6">
+      <div className="text-center mb-4">
+        <h3 className="text-2xl font-bold">Manage Leaves</h3>
       </div>
 
-      {/* Search */}
-      <input
-        type="text"
-        placeholder="Search By Emp ID"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        className="w-full mb-4 p-2 border border-gray-300 rounded"
-      />
+      <div className="flex justify-between items-center mb-4">
+        <input
+          type="text"
+          placeholder="Search by Emp ID"
+          className="px-4 py-2 border rounded w-1/2"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <div className="flex gap-2">
+          {["Pending", "Approved", "Rejected"].map((status) => (
+            <button
+              key={status}
+              onClick={() =>
+                setFilterStatus(filterStatus === status ? "" : status)
+              }
+              className={`px-4 py-2 rounded ${
+                filterStatus === status
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-200 text-gray-800"
+              }`}
+            >
+              {status}
+            </button>
+          ))}
+        </div>
+      </div>
 
-      {/* Table */}
       <div className="overflow-x-auto">
-        <table className="min-w-full table-auto border border-gray-300 text-sm">
-          <thead className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-            <tr>
-              <th className="border p-2">S No</th>
-              <th className="border p-2">Emp ID</th>
-              <th className="border p-2">Name</th>
-              <th className="border p-2">Leave Type</th>
-              <th className="border p-2">Department</th>
-              <th className="border p-2">Days</th>
-              <th className="border p-2">Status</th>
-              <th className="border p-2">Action</th>
+        <table className="min-w-full bg-white border">
+          <thead>
+            <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+              <th className="py-3 px-4 text-center">S No</th>
+              <th className="py-3 px-4 text-center">Emp ID</th>
+              <th className="py-3 px-4 text-center">Name</th>
+              <th className="py-3 px-4 text-center">Leave Type</th>
+              <th className="py-3 px-4 text-center">Department</th>
+              <th className="py-3 px-4 text-center">Days</th>
+              <th className="py-3 px-4 text-center">Status</th>
+              <th className="py-3 px-4 text-center">Action</th>
             </tr>
           </thead>
-          <tbody>
-            {paginatedLeaves.map((leave, index) => (
-              <tr key={leave._id || index} className="text-center">
-                <td className="border p-2">
-                  {(page - 1) * ITEMS_PER_PAGE + index + 1}
-                </td>
-                <td className="border p-2">
-                  {leave?.employeeId?.employeeId || "N/A"}
-                </td>
-                <td className="border p-2">
-                  {leave?.employeeId?.userId?.name || "N/A"}
-                </td>
-                <td className="border p-2">{leave?.leaveType || "N/A"}</td>
-                <td className="border p-2">
-                  {leave?.employeeId?.department?.dep_name || "N/A"}
-                </td>
-                <td className="border p-2">{leave?.appliedAt || "N/A"}</td>
-                <td className={`border p-2 ${statusColor(leave?.status)}`}>
-                  {leave?.status || "N/A"}
-                </td>
-                <td className="border p-2">
-                  <button
-                    onClick={() =>
-                      navigate(`/admin-dashboard/leave/${leave._id}`)
-                    }
-                    className="bg-blue-500 text-white px-3 py-1 rounded text-xs"
+          <tbody className="text-gray-700 text-sm">
+            {paginatedLeaves.length > 0 ? (
+              paginatedLeaves.map((leave, index) => (
+                <tr
+                  key={leave._id || index}
+                  className="border-b hover:bg-gray-100"
+                >
+                  <td className="py-3 px-4 text-center">
+                    {(page - 1) * ITEMS_PER_PAGE + index + 1}
+                  </td>
+                  <td className="py-3 px-4 text-center">
+                    {leave?.employeeId?.employeeId || "N/A"}
+                  </td>
+                  <td className="py-3 px-4 text-center">
+                    {leave?.employeeId?.userId?.name || "N/A"}
+                  </td>
+                  <td className="py-3 px-4 text-center">
+                    {leave?.leaveType || "N/A"}
+                  </td>
+                  <td className="py-3 px-4 text-center">
+                    {leave?.employeeId?.department?.dep_name || "N/A"}
+                  </td>
+                  <td className="py-3 px-4 text-center">
+                    {leave?.appliedAt || "N/A"}
+                  </td>
+                  <td
+                    className={`py-3 px-4 text-center ${statusColor(
+                      leave?.status
+                    )}`}
                   >
-                    View
-                  </button>
-                </td>
-              </tr>
-            ))}
-            {paginatedLeaves.length === 0 && (
+                    {leave?.status || "N/A"}
+                  </td>
+                  <td className="py-3 px-4 text-center">
+                    <button
+                      onClick={() =>
+                        navigate(`/admin-dashboard/leave/${leave._id}`)
+                      }
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded text-sm"
+                    >
+                      View
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
               <tr>
-                <td colSpan="8" className="text-center p-4 text-gray-500">
+                <td colSpan="8" className="text-center py-4 text-gray-500">
                   No results found
                 </td>
               </tr>
             )}
           </tbody>
         </table>
-      </div>
 
-      {/* Pagination */}
-      <Pagination
-        currentPage={page}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 };

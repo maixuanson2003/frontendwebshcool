@@ -15,6 +15,17 @@ export const fetchDashboard = async () => {
       return response.data;
     }
   } catch (err) {
-    console.error("Error fetching departments:", err);
+    if (err.response) {
+      const status = err.response.status;
+      console.log(status);
+
+      if (status === 401) {
+        alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      } else {
+        alert(err.response.data.error || "Có lỗi xảy ra");
+      }
+    }
   }
 };

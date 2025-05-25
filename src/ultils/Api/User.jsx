@@ -52,6 +52,16 @@ export const UpdateUser = async (id, formData) => {
 
     return response.data.success;
   } catch (err) {
-    console.error("Error fetching departments:", err);
+    if (err.response) {
+      const status = err.response.status;
+
+      if (status === 401) {
+        alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      } else {
+        alert(err.response.data.error || "Có lỗi xảy ra");
+      }
+    }
   }
 };
