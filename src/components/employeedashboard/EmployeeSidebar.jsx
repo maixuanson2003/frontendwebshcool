@@ -10,6 +10,7 @@ const EmployeeSidebar = () => {
       to: "/employee-dashboard",
       icon: <FaTachometerAlt />,
       label: "Dashboard",
+      end: true,
     },
     {
       to: `/employee-dashboard/employee/${user._id}`,
@@ -36,6 +37,7 @@ const EmployeeSidebar = () => {
           <NavLink
             key={index}
             to={item.to}
+            end={item.end}
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors ${
                 isActive ? "bg-gray-700 font-semibold" : ""

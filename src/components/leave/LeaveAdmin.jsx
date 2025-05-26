@@ -128,7 +128,7 @@ const ManageLeaves = () => {
                     {leave?.employeeId?.department?.dep_name || "N/A"}
                   </td>
                   <td className="py-3 px-4 text-center">
-                    {leave?.appliedAt || "N/A"}
+                    {new Date(leave?.appliedAt).toLocaleDateString()}
                   </td>
                   <td
                     className={`py-3 px-4 text-center ${statusColor(

@@ -9,6 +9,7 @@ const DepartmentList = () => {
   const [searchTerm, setSearchTerm] = useState(""); // 🔍 Thêm state cho tìm kiếm
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [render, setRender] = useState(0);
 
   const ITEMS_PER_PAGE = 5;
   const page = parseInt(searchParams.get("page")) || 1;
@@ -24,7 +25,7 @@ const DepartmentList = () => {
     };
 
     fetchDepartmentList();
-  }, []);
+  }, [render]);
 
   // 🔍 Lọc danh sách theo tên
   const filteredDepartments = departments.filter((dept) =>
@@ -46,10 +47,14 @@ const DepartmentList = () => {
   };
 
   const handleDeleteDepartment = async (id) => {
+    const confirmDelete = window.confirm(
+      "Bạn có chắc chắn muốn xóa nhân viên này?"
+    );
+    if (!confirmDelete) return;
     try {
       const response = await handleDelete(id);
       if (response) {
-        window.location.reload();
+        setRender(render + 1);
       }
     } catch (err) {
       console.error("Error deleting department:", err);

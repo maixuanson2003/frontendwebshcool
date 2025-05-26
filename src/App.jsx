@@ -26,12 +26,14 @@ import LeaveDetails from "./components/leave/LeaveDetails";
 import LeaveHistory from "./components/leave/LeaveHistory";
 import UserList from "./components/user/UserList";
 import UpdateForm from "./components/user/UpdateForm";
+import Unauthorized from "./pages/Unauthorized";
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/admin-dashboard" />}></Route>
         <Route path="/login" element={<Login />}></Route>
+        <Route path="/unauthorized" element={<Unauthorized />}></Route>
         <Route
           path="/admin-dashboard"
           element={
@@ -77,7 +79,7 @@ function App() {
             element={<AddSalary />}
           ></Route>
           <Route
-            path="/admin-dashboard/salary-view/:id"
+            path="/admin-dashboard/employee/salary-view/:id"
             element={<SalaryView />}
           ></Route>
           <Route
@@ -89,7 +91,7 @@ function App() {
             element={<LeaveDetails />}
           ></Route>
           <Route
-            path="/admin-dashboard/leave/history/:id"
+            path="/admin-dashboard/employee/leave/history/:id"
             element={<LeaveHistory />}
           ></Route>
           <Route path="/admin-dashboard/user" element={<UserList />}></Route>

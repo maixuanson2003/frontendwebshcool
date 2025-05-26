@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Pagination from "../pagination/Pagination";
-import { GetEmployeeList } from "../../ultils/Api/Employee";
+import { DeleteEmployee, GetEmployeeList } from "../../ultils/Api/Employee";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -9,7 +9,7 @@ const ListEmployee = () => {
   const [employees, setEmployees] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [render, setRender] = useState(0);
   const page = parseInt(searchParams.get("page")) || 1;
 
   useEffect(() => {
@@ -18,9 +18,19 @@ const ListEmployee = () => {
       setEmployees(data || []);
     };
     fetchData();
-  }, []);
+  }, [render]);
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Bạn có chắc chắn muốn xóa phong ban này?"
+    );
+    if (!confirmDelete) return;
 
-  // Lọc theo từ khóa tìm kiếm (theo tên hoặc ID)
+    const response = await DeleteEmployee(id);
+    if (response) {
+      setRender(render + 1);
+    }
+  };
+
   const filteredEmployees = employees.filter((emp) => {
     const name = emp?.userId?.name?.toLowerCase() || "";
     const empId = emp?._id?.toLowerCase() || "";
@@ -40,7 +50,7 @@ const ListEmployee = () => {
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-    setSearchParams({ page: 1 }); // Reset về trang 1 khi tìm kiếm
+    setSearchParams({ page: 1 });
   };
 
   const paginatedEmployees = filteredEmployees.slice(
@@ -119,17 +129,23 @@ const ListEmployee = () => {
                     Edit
                   </Link>
                   <Link
-                    to={`/admin-dashboard/salary-view/${emp._id}`}
+                    to={`/admin-dashboard/employee/salary-view/${emp._id}`}
                     className="bg-yellow-400 px-3 py-1 rounded text-white"
                   >
                     Salary
                   </Link>
                   <Link
-                    to={`/admin-dashboard/leave/history/${emp._id}`}
+                    to={`/admin-dashboard/employee/leave/history/${emp._id}`}
                     className="bg-red-500 px-3 py-1 rounded text-white"
                   >
                     Leave
                   </Link>
+                  <button
+                    onClick={() => handleDelete(emp._id)}
+                    className="bg-red-500 px-3 py-1 rounded text-white"
+                  >
+                    delete
+                  </button>
                 </td>
               </tr>
             ))}
