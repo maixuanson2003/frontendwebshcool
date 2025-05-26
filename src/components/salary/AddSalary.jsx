@@ -31,7 +31,6 @@ const AddSalary = () => {
 
     setFormData((prev) => ({
       ...prev,
-      departmentId,
       employeeId: "",
       basicSalary: 0,
     }));
@@ -63,6 +62,8 @@ const AddSalary = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData);
+
     const data = await CreateDataSalary(formData);
     if (data) {
       alert("add salary success");
@@ -77,7 +78,6 @@ const AddSalary = () => {
           <div>
             <label className="block mb-1 font-medium">Department</label>
             <select
-              name="departmentId"
               value={departmentForm}
               onChange={handleChangeDepartment}
               className="w-full border border-gray-300 p-2 rounded"
